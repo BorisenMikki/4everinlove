@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    img {
+      max-width: 90%;
+      max-height: 80%;
+      object-fit: contain;
+    }
+    p {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+  <img id="photo" src="">
+  <p id="text"></p>
+
+  <script>
+    const items = [
+      { img: "zielige_mikki.jpeg", text: "Soms ben je een beetje zielig" }
+    ];
+
+    const random = items[Math.floor(Math.random() * items.length)];
+    document.getElementById("photo").src = random.img;
+    document.getElementById("text").innerText = random.text;
+  </script>
+
+</body>
+</html>
