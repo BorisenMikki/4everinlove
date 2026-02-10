@@ -2,44 +2,111 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       margin: 0;
-      background: black;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      color: white;
-      font-family: sans-serif;
       text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: background 1.5s, color 1.5s;
+      overflow: hidden;
     }
+
+    body.day {
+      background: #faf7f2;
+      color: #222;
+    }
+
+    body.night {
+      background: #050505;
+      color: #eee;
+    }
+
     img {
-      max-width: 90%;
-      max-height: 80%;
+      max-width: 90vw;
+      max-height: 75vh;
       object-fit: contain;
+      opacity: 0;
+      animation: fadeIn 2s forwards;
     }
+
     p {
       margin-top: 20px;
-      font-size: 1.2em;
+      font-size: 1.15em;
+      max-width: 90%;
+      min-height: 1.5em;
+      opacity: 0;
+      animation: fadeIn 2.5s forwards;
+      animation-delay: 0.5s;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
     }
   </style>
 </head>
-<body>
 
-  <img id="photo" src="">
+<body>
+  <img id="photo">
   <p id="text"></p>
 
   <script>
+    // 🌙 Dag / nacht modus
+    const hour = new Date().getHours();
+    document.body.classList.add(hour >= 20 || hour < 7 ? "night" : "day");
+
+    // 🎂 Verjaardag (PAS DEZE DATUM AAN)
+    const birthday = { day: 18, month: 12 }; // 14 juni
+    const today = new Date();
+
+    const birthdayItem = {
+      img: "verjaardag.jpeg",
+      text: "Je gaat deze website sowieso niet openen op je verjaardag, maar als dat wel zo is, weet dan hoeveel ik van je hou."
+    };
+
+    // 🖤 Normale herinneringen
     const items = [
-      { img: "zielige_mikki.jpeg", text: "Soms ben je een beetje zielig" }
+      { img: "zielige_mikki.jpeg", text: "Soms ben je een beetje zielig" },
+      { img: "ski_kusje.HEIC", text: "Wat was de lucht toen mooi he" }
     ];
 
-    const random = items[Math.floor(Math.random() * items.length)];
-    document.getElementById("photo").src = random.img;
-    document.getElementById("text").innerText = random.text;
-  </script>
+    // 🎁 Kies juiste item
+    let chosen;
+    if (
+      today.getDate() === birthday.day &&
+      today.getMonth() + 1 === birthday.month
+    ) {
+      chosen = birthdayItem;
+    } else {
+      chosen = items[Math.floor(Math.random() * items.length)];
+    }
 
+    const photo = document.getElementById("photo");
+    const textEl = document.getElementById("text");
+
+    photo.src = chosen.img;
+
+    // ✨ Typ-effect
+    const message = chosen.text;
+    let i = 0;
+
+    function typeText() {
+      if (i < message.length) {
+        textEl.textContent += message.charAt(i);
+        i++;
+        setTimeout(typeText, 45);
+      }
+    }
+
+    typeText();
+  </script>
 </body>
 </html>
+
+
