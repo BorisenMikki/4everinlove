@@ -53,6 +53,75 @@
 </head>
 
 <body>
+  <!-- 🎮 MINIGAME UI (toegevoegd) -->
+  <button id="openGame" style="
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.6;
+    z-index: 10001;
+    background: #fff3;
+    backdrop-filter: blur(3px);
+  ">
+    🎮
+  </button>
+
+  <div id="gameOverlay" style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    color: white;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    z-index: 10000;
+  ">
+    <div id="gameIntro">
+      <p style="max-width:600px; font-size:18px;">
+        MINIGAME: bedenk zoveel mogelijk plekken waar wij samen een date hebben gehad.
+        Als je er binnen 1 minuut meer dan 10 hebt, win je een date naar een nieuwe plek!!!
+      </p>
+      <button id="startGame" style="padding:10px 20px; font-size:16px; border-radius:8px; cursor:pointer;">
+        Start
+      </button>
+    </div>
+
+    <div id="countdown" style="font-size:60px; display:none;"></div>
+
+    <div id="gameArea" style="display:none; width:100%; max-width:700px;">
+      <input id="answerInput" placeholder="Typ hier een plek..."
+        style="padding:10px; width:80%; font-size:16px;" />
+      <div id="answers" style="
+        margin-top:20px;
+        display:flex;
+        flex-wrap:wrap;
+        gap:10px;
+        justify-content:center;
+      "></div>
+    </div>
+
+    <div id="timer" style="
+      position:absolute;
+      bottom:20px;
+      right:30px;
+      font-size:18px;
+    ">
+      60
+    </div>
+
+    <div id="result" style="font-size:22px; margin-top:20px;"></div>
+  </div>
+  <!-- EINDE MINIGAME UI -->
+
+  <!-- Bestaande content -->
   <img id="photo">
   <p id="text"></p>
 
@@ -72,89 +141,88 @@
 
     // 🖤 Normale herinneringen
     const items = [
-  { img: "ski_kusje.jpeg", text: "Mogen we niet even terug naar Italië" },
-  { img: "zielige_mikki.jpeg", text: "Soms ben je ook een beetje zielig" },
-  { img: "0DC615C9-47BA-4E60-B891-0930CD9B3C2A.jpeg", text: "Volgensmij is dit een foto uit Hamburg, waar het allemaal een beetje begon... :) " },
-  { img: "72BFD564-AF81-45C7-BF4D-7382B3C95C38.jpeg", text: "Ich möchte bitte gerne nog ein Weizen" },
-  { img: "2907ACEA-3281-419F-9740-90993014B7EA.jpeg", text: "Ditte vette raveparty op de A10, dat was echt een once in a lifetime #ikwilweerzobruinzijn" },
-  { img: "AC90B10F-214D-4573-BD62-7BA425A2B771.jpeg", text: "Klein kusje, groot bord Tiroler Gröstl" },
-  { img: "C06194D1-5DF7-4EC6-A060-8A9302920D69.jpeg", text: "Biertje van de Späti en ready to party hardy #ikmiseensnor" },
-  { img: "d54184f7-6988-4b68-989e-7936df1e8148.jpeg", text: "Wachten op de tram met jou voelt niet als wachten" },
-  { img: "D749614E-EA37-4C49-8C3D-357BA059CA22.jpeg", text: "De zomer is heel leuk, maar dit is toch ook echt ongelofeloos" },
-  { img: "e4bdaf6b-b5f0-479f-8dc3-9e8d06c4e6cd.jpeg", text: "Ik vind de getekende demonenversie van deze toch echt beter" },
-  { img: "EF3993F9-C9F0-4054-A1E6-A8CA779A4809.jpeg", text: "Doe de Michel" },
+      { img: "ski_kusje.jpeg", text: "Mogen we niet even terug naar Italië" },
+      { img: "zielige_mikki.jpeg", text: "Soms ben je ook een beetje zielig" },
+      { img: "0DC615C9-47BA-4E60-B891-0930CD9B3C2A.jpeg", text: "Volgensmij is dit een foto uit Hamburg, waar het allemaal een beetje begon... :) " },
+      { img: "72BFD564-AF81-45C7-BF4D-7382B3C95C38.jpeg", text: "Ich möchte bitte gerne nog ein Weizen" },
+      { img: "2907ACEA-3281-419F-9740-90993014B7EA.jpeg", text: "Ditte vette raveparty op de A10, dat was echt een once in a lifetime #ikwilweerzobruinzijn" },
+      { img: "AC90B10F-214D-4573-BD62-7BA425A2B771.jpeg", text: "Klein kusje, groot bord Tiroler Gröstl" },
+      { img: "C06194D1-5DF7-4EC6-A060-8A9302920D69.jpeg", text: "Biertje van de Späti en ready to party hardy #ikmiseensnor" },
+      { img: "d54184f7-6988-4b68-989e-7936df1e8148.jpeg", text: "Wachten op de tram met jou voelt niet als wachten" },
+      { img: "D749614E-EA37-4C49-8C3D-357BA059CA22.jpeg", text: "De zomer is heel leuk, maar dit is toch ook echt ongelofeloos" },
+      { img: "e4bdaf6b-b5f0-479f-8dc3-9e8d06c4e6cd.jpeg", text: "Ik vind de getekende demonenversie van deze toch echt beter" },
+      { img: "EF3993F9-C9F0-4054-A1E6-A8CA779A4809.jpeg", text: "Doe de Michel" },
 
-  { img: "IMG_1349.jpeg", text: "Het moment dat het weer iets van lekker weer is gaan we de hele middag in Vondelpark liggen met sinaasappels" },
-  { img: "IMG_1360.jpeg", text: "Geen uitleg nodig" },
-  { img: "IMG_1484.jpeg", text: "Belgische politie: 'NU DIE FIETS AF, LEVENSGEVAARLIJK!'" },
-  { img: "IMG_1490.jpeg", text: "Belgische politie: 'NU DIE FIETS AF, LEVENSGEVAARLIJK!" },
-  { img: "IMG_1504.jpeg", text: "Lara: 'Protein is really not imporant, you shouldn't eat to much of it'" },
-  { img: "IMG_1511.jpeg", text: "Cutiepetoeties, van de zomer weer veel feestjes met Lara pakken!" },
-  { img: "IMG_1560.jpeg", text: "Blauw, rood, bruin, blond, het bier was lauw en de avond bond" },
-  { img: "IMG_1695.jpeg", text: "Wat is nog leuker dan een avond Skatecafe? Een avond skatecafe met Elin natuurlijk :)" },
-  { img: "IMG_1702.jpeg", text: "Fietsen met jou voorop is zwaarder, maar makkelijker, snap je?" },
-  { img: "IMG_1743.jpeg", text: "Tobi's appartement + jij in mijn armen + sigaretje = perfectie" },
-  { img: "IMG_1746.jpeg", text: "Ff, hier zie je toch de allergrootste gangster (van de bovenste verdieping van Sint-Annastraat 13)?" },
-  { img: "IMG_1751.jpeg", text: "En de prijs voor de allerschattigste foto ooit gaat naar...." },
-  { img: "IMG_1766.jpeg", text: "Hapjes zijn het lekkerst op het strand" },
-  { img: "IMG_1782.jpeg", text: "Als je moest kiezen, nooit poffertjes of nooit meer een vinger in mijn mond als ik gaap, wat kies je dan?" },
-  { img: "IMG_1807.jpeg", text: "We gaan gaypride dit jaar echt ff extravagant doen, wat is dat geweldig (ik draag dit jaar ook het bijbehorende broekje ;)" },
-  { img: "IMG_1831.jpeg", text: "Hapjes zijn het lekkerst op het strand" },
-  { img: "IMG_1839.jpeg", text: "Dat ziet er lekker, daar wil ik mijn mond wel even overheen zetten. En mooie koffie ook" },
-  { img: "IMG_1853.jpeg", text: "Hier scheeuw ik: 'JE ZIET ER ZO GOED UIT MET DIE BANDANAAAAA!'" },
-  { img: "IMG_1888.jpeg", text: "#karbonkelkusje" },
-  { img: "IMG_1910.jpeg", text: "Zeldzame foto van een Amsterdams meisje in Leuven, die echt lacht als een superster, WAUW" },
-  { img: "IMG_1924.jpeg", text: "'He ChatGPT, maak een foto van een verdwaalde hippie in Leuven met een ijsje'" },
-  { img: "IMG_1929.jpeg", text: "Oh gewoon een foto van klein lepe.... WACHT ER ZIT EEN JONGETJE IN!!!" },
-  { img: "IMG_1970.jpeg", text: "Health level: 100, Swag level: 10000000000 ⌐■_■" },
-  { img: "IMG_1978.jpeg", text: "Kan jij heel gauw weer je baywatch badpak aandoen?" },
-  { img: "IMG_2005.jpeg", text: "Mevrouw, kijk uit, uw tong valt uit u mond :P. Bonusvraag, welke stad is dit? App het naar mij en ontvang 5 kusjes als prijs." },
-  { img: "IMG_2012.jpeg", text: "Coole jas, en NOG een cooler meisje ;)" },
-  { img: "IMG_2083.jpeg", text: "Alle vrienden van je ouders leren kennen en super leuke film kijken, en dat allemaal ook nog eens met jou #topavond" },
-  { img: "IMG_2102.jpeg", text: "Het gaat dus rond dat ene schelpje dat je toen niet mee had genomen nu de bekenste schelpenvolkszanger van de Noordzee is" },
-  { img: "IMG_2109.jpeg", text: "Rode wijn, een warme heater en koud biertje en felle discussies over tijd, daarom hou ik zoveel van je" },
-  { img: "IMG_2128.jpeg", text: "Live opname van het aller leukste beste liefste origneelste coolste en cutestje kado ooit (en tevens de geboorte van Joris)" },
-  { img: "IMG_2149.jpeg", text: "Een beetje regen stopt die coole chicks niet om ADE helemaal op zijn kop te zetten ⌐■_■" },
-  { img: "IMG_2211.jpeg", text: "'Doe even alsof ik net iets heel grappigs zei'" },
-  { img: "IMG_2217.jpeg", text: "OMA ALERT: Je moet nu je oma appen en vragen hoe der dag was en Boris appen dat hij hetzelfde moet doen" },
-  { img: "IMG_2280.jpeg", text: "Hapjes zijn het een na lekkerst in de tram" },
-  { img: "IMG_2300.jpeg", text: "Even een herrinering dat jij gewoon de koloniale geschiedenis van je eigen buurt hebt onderzocht en gedeeld met allemaal vrienden buurtbewoners, zo trots!" },
-  { img: "IMG_2305.jpeg", text: "Petitie om het aandeel vrouwen in straatnaambordjes omhoog te halen door de Sloterkade te veranderen naar Vrouwmetpowermikkiflowerstraat, wie stemt voor?" },
-  { img: "IMG_2370.jpeg", text: "Prijsvraagfoto! App nu wat er op het gebouw achter mij staat wat ik altijd zeg als we er langs rijden en win 5 kusjes!" },
-  { img: "IMG_2402.jpeg", text: "Of nooit meer sinaasappels of nooit meer eitjes door mij voor ontbijt, wat zou je dan kiezen? " },
-  { img: "IMG_2407.jpeg", text: "'He sir, could you please take a cute picture of us under the star'" },
-  { img: "IMG_2415.jpeg", text: "Ik weet nou niet wat schattiger is, jij of die miauwerds. PRIJSVRAAG: welke bijnamen gaf jij ze? (1 kusje per juist antwoord)" },
-  { img: "IMG_2418.jpeg", text: "Du sind so schöne damen, ich liebe dich gans viel und ich möchte weihnacht jeden jahr vhieren mit du :)" },
-  { img: "IMG_2424.jpeg", text: "IIEEELLLLLLL JULLIE LIKKEN ELKAAR GADVERDAMME (ʘᗩʘ')" },
-  { img: "IMG_2426.jpeg", text: "Je ziet de oprechte lol die jullie hebben zo goed op deze foto, jullie zijn zo geweldig samen" },
-  { img: "IMG_2464.jpeg", text: "Zo cute, maar jullie winnen het nooit van mij en omi ヾ(⌐■_■)ノ♪" },
-  { img: "IMG_2471.jpeg", text: "Sorry, kon het niet laten ¯\_(ツ)_/¯" },
-  { img: "IMG_2483.jpeg", text: "Drie generaties power vrouwen en een blauwe hemel, wat een plaatje" },
-  { img: "IMG_2502.jpeg", text: "Gekkie! Dat ene oog van je is een beetje de weg kwijt :P" },
-  { img: "IMG_2507.jpeg", text: "GLUHWEINTOURRRR, ook al woon je niet meer in Scheveningen volgend jaar, ga dit samen met Lot gewoon door he, misschien alleen zonder de hardcore dit jaar (ᵔᴥᵔ)" },
-  { img: "IMG_2574.jpeg", text: "Wat een multitalent ben je ook he, gewoon even op je hoofd staan op het strand! (en dan ook nog een zo gei.... ehm mooi ( ͡° ͜ʖ ͡°)" },
-  { img: "IMG_2609.jpeg", text: "CHALLENGE! Bedenk welke berichtje/notificatie er op mijn telefoon kwam om deze gezichten van ons te krijgen. Ik begin: 'Trein naar Leuven rijdt de hele avond niet'" },
-  { img: "IMG_2617.jpeg", text: "Wat een lekkere vriend heb je ook he ᕙ(⇀‸↼‶)ᕗ" },
-  { img: "IMG_2626.jpeg", text: "Holy shit, wat is het daar mooi he. Mag uik volgend jaar weer mee ʕ•ᴥ•ʔ ?" },
-  { img: "IMG_2656.jpeg", text: "Eten maken we altijd zelf, we zijn niet lui. Die sushi ziet er lekker uit, maar de echte snack zit in de groene trui (｡◕‿◕｡)" },
-  { img: "IMG_5566.jpeg", text: "'He, ga je even mee naar de wc?'" },
-  { img: "IMG_5568.jpeg", text: "TOBI ALERT: app Tobi nu en zeg hoe erg we hem missen en dat hij deze zomer gewoon naar Europa komt." },
-  { img: "IMG_5573.jpeg", text: "'De bende van ellende, klaar om de nacht te veroveren': Berlijn, 2025" },
-  { img: "IMG_5843.jpeg", text: "Jij, dakterras, wijntje, pizza, goeie gesprekken en het allemaal nog een beetje spannend vinden, take me back" },
-  { img: "IMG_6651.jpeg", text: "Noem een betere groep mensen om een weekend te beleven die je nooit meer vergeet, ik wacht" },
-  { img: "IMG_6671.jpeg", text: "De drie meest tevreden jongens allertijden" },
-  { img: "IMG_2743.jpeg", text: "Nancy was trots op ons, alleen nog even oefenen met de houten lepel buiten de pan houden" },
-  { img: "IMG_2752.PNG", text: "Even laten zien hoe statisch je haar was, en ik mocht geen screenshot nemen... :O" },
-  { img: "IMG_2762.JPG", text: "Ik denk dat ik geen enkel ander moment rustiger ben dan hier op deze foto" },
-  { img: "4bf0ff7b-bac7-411f-b9a8-b534039d63c5.JPG", text: "Marathon door Amsterdam wandelen om wilde matcha moeders te kijken, moeten we vaker doen" },
-  { img: "B4F91D87-C767-402F-A6A7-534B4EE027D3.JPG", text: "Je kado voor valentijn heeft me de laatste weken gewoon echt een beetje makkelijker gemaakt, je weet hoe geweldig je bent toch?" },
-  { img: "IMG_2675.jpeg", text: "ELIN CHALLENGE: Omdat we Elin altijd zoveel missen, moet je Elin nu appen dat je haar mist en om te vragen wanneer we elkaar weer zien :)" },
-  { img: "IMG_2683.jpeg", text: "Valentijns weekend met jou is natuurlijk al geweldig, maar met onze vriendjes erbij was het gewoon nog leuker" },
-  { img: "IMG_2686.jpeg", text: "Eindelijk heb ik je echt een roos gegeven voor Valentijn, dat maakte me heel blij :)" },
-  { img: "IMG_2690.jpeg", text: "Qutie is Elin ook he 💗ᗜ💗" },
-  { img: "IMG_2698.jpeg", text: "Dansjes met Maddie!!! En beste vriendjes worden met de beveiliger. Ik ben zijn naam vergeten, 5 kusjes als jij het nog weet :)" }
-];
-
+      { img: "IMG_1349.jpeg", text: "Het moment dat het weer iets van lekker weer is gaan we de hele middag in Vondelpark liggen met sinaasappels" },
+      { img: "IMG_1360.jpeg", text: "Geen uitleg nodig" },
+      { img: "IMG_1484.jpeg", text: "Belgische politie: 'NU DIE FIETS AF, LEVENSGEVAARLIJK!'" },
+      { img: "IMG_1490.jpeg", text: "Belgische politie: 'NU DIE FIETS AF, LEVENSGEVAARLIJK!" },
+      { img: "IMG_1504.jpeg", text: "Lara: 'Protein is really not imporant, you shouldn't eat to much of it'" },
+      { img: "IMG_1511.jpeg", text: "Cutiepetoeties, van de zomer weer veel feestjes met Lara pakken!" },
+      { img: "IMG_1560.jpeg", text: "Blauw, rood, bruin, blond, het bier was lauw en de avond bond" },
+      { img: "IMG_1695.jpeg", text: "Wat is nog leuker dan een avond Skatecafe? Een avond skatecafe met Elin natuurlijk :)" },
+      { img: "IMG_1702.jpeg", text: "Fietsen met jou voorop is zwaarder, maar makkelijker, snap je?" },
+      { img: "IMG_1743.jpeg", text: "Tobi's appartement + jij in mijn armen + sigaretje = perfectie" },
+      { img: "IMG_1746.jpeg", text: "Ff, hier zie je toch de allergrootste gangster (van de bovenste verdieping van Sint-Annastraat 13)?" },
+      { img: "IMG_1751.jpeg", text: "En de prijs voor de allerschattigste foto ooit gaat naar...." },
+      { img: "IMG_1766.jpeg", text: "Hapjes zijn het lekkerst op het strand" },
+      { img: "IMG_1782.jpeg", text: "Als je moest kiezen, nooit poffertjes of nooit meer een vinger in mijn mond als ik gaap, wat kies je dan?" },
+      { img: "IMG_1807.jpeg", text: "We gaan gaypride dit jaar echt ff extravagant doen, wat is dat geweldig (ik draag dit jaar ook het bijbehorende broekje ;)" },
+      { img: "IMG_1831.jpeg", text: "Hapjes zijn het lekkerst op het strand" },
+      { img: "IMG_1839.jpeg", text: "Dat ziet er lekker, daar wil ik mijn mond wel even overheen zetten. En mooie koffie ook" },
+      { img: "IMG_1853.jpeg", text: "Hier scheeuw ik: 'JE ZIET ER ZO GOED UIT MET DIE BANDANAAAAA!'" },
+      { img: "IMG_1888.jpeg", text: "#karbonkelkusje" },
+      { img: "IMG_1910.jpeg", text: "Zeldzame foto van een Amsterdams meisje in Leuven, die echt lacht als een superster, WAUW" },
+      { img: "IMG_1924.jpeg", text: "'He ChatGPT, maak een foto van een verdwaalde hippie in Leuven met een ijsje'" },
+      { img: "IMG_1929.jpeg", text: "Oh gewoon een foto van klein lepe.... WACHT ER ZIT EEN JONGETJE IN!!!" },
+      { img: "IMG_1970.jpeg", text: "Health level: 100, Swag level: 10000000000 ⌐■_■" },
+      { img: "IMG_1978.jpeg", text: "Kan jij heel gauw weer je baywatch badpak aandoen?" },
+      { img: "IMG_2005.jpeg", text: "Mevrouw, kijk uit, uw tong valt uit u mond :P. Bonusvraag, welke stad is dit? App het naar mij en ontvang 5 kusjes als prijs." },
+      { img: "IMG_2012.jpeg", text: "Coole jas, en NOG een cooler meisje ;)" },
+      { img: "IMG_2083.jpeg", text: "Alle vrienden van je ouders leren kennen en super leuke film kijken, en dat allemaal ook nog eens met jou #topavond" },
+      { img: "IMG_2102.jpeg", text: "Het gaat dus rond dat ene schelpje dat je toen niet mee had genomen nu de bekenste schelpenvolkszanger van de Noordzee is" },
+      { img: "IMG_2109.jpeg", text: "Rode wijn, een warme heater en koud biertje en felle discussies over tijd, daarom hou ik zoveel van je" },
+      { img: "IMG_2128.jpeg", text: "Live opname van het aller leukste beste liefste origneelste coolste en cutestje kado ooit (en tevens de geboorte van Joris)" },
+      { img: "IMG_2149.jpeg", text: "Een beetje regen stopt die coole chicks niet om ADE helemaal op zijn kop te zetten ⌐■_■" },
+      { img: "IMG_2211.jpeg", text: "'Doe even alsof ik net iets heel grappigs zei'" },
+      { img: "IMG_2217.jpeg", text: "OMA ALERT: Je moet nu je oma appen en vragen hoe der dag was en Boris appen dat hij hetzelfde moet doen" },
+      { img: "IMG_2280.jpeg", text: "Hapjes zijn het een na lekkerst in de tram" },
+      { img: "IMG_2300.jpeg", text: "Even een herrinering dat jij gewoon de koloniale geschiedenis van je eigen buurt hebt onderzocht en gedeeld met allemaal vrienden buurtbewoners, zo trots!" },
+      { img: "IMG_2305.jpeg", text: "Petitie om het aandeel vrouwen in straatnaambordjes omhoog te halen door de Sloterkade te veranderen naar Vrouwmetpowermikkiflowerstraat, wie stemt voor?" },
+      { img: "IMG_2370.jpeg", text: "Prijsvraagfoto! App nu wat er op het gebouw achter mij staat wat ik altijd zeg als we er langs rijden en win 5 kusjes!" },
+      { img: "IMG_2402.jpeg", text: "Of nooit meer sinaasappels of nooit meer eitjes door mij voor ontbijt, wat zou je dan kiezen? " },
+      { img: "IMG_2407.jpeg", text: "'He sir, could you please take a cute picture of us under the star'" },
+      { img: "IMG_2415.jpeg", text: "Ik weet nou niet wat schattiger is, jij of die miauwerds. PRIJSVRAAG: welke bijnamen gaf jij ze? (1 kusje per juist antwoord)" },
+      { img: "IMG_2418.jpeg", text: "Du sind so schöne damen, ich liebe dich gans veel und ich möchte weihnacht jeden jahr vhieren mit du :)" },
+      { img: "IMG_2424.jpeg", text: "IIEEELLLLLLL JULLIE LIKKEN ELKAAR GADVERDAMME (ʘᗩʘ')" },
+      { img: "IMG_2426.jpeg", text: "Je ziet de oprechte lol die jullie hebben zo goed op deze foto, jullie zijn zo geweldig samen" },
+      { img: "IMG_2464.jpeg", text: "Zo cute, maar jullie winnen het nooit van mij en omi ヾ(⌐■_■)ノ♪" },
+      { img: "IMG_2471.jpeg", text: "Sorry, kon het niet laten ¯\\_(ツ)_/¯" },
+      { img: "IMG_2483.jpeg", text: "Drie generaties power vrouwen en een blauwe hemel, wat een plaatje" },
+      { img: "IMG_2502.jpeg", text: "Gekkie! Dat ene oog van je is een beetje de weg kwijt :P" },
+      { img: "IMG_2507.jpeg", text: "GLUHWEINTOURRRR, ook al woon je niet meer in Scheveningen volgend jaar, ga dit samen met Lot gewoon door he, misschien alleen zonder de hardcore dit jaar (ᵔᴥᵔ)" },
+      { img: "IMG_2574.jpeg", text: "Wat een multitalent ben je ook he, gewoon even op je hoofd staan op het strand! (en dan ook nog een zo gei.... ehm mooi ( ͡° ͜ʖ ͡°)" },
+      { img: "IMG_2609.jpeg", text: "CHALLENGE! Bedenk welke berichtje/notificatie er op mijn telefoon kwam om deze gezichten van ons te krijgen. Ik begin: 'Trein naar Leuven rijdt de hele avond niet'" },
+      { img: "IMG_2617.jpeg", text: "Wat een lekkere vriend heb je ook he ᕙ(⇀‸↼‶)ᕗ" },
+      { img: "IMG_2626.jpeg", text: "Holy shit, wat is het daar mooi he. Mag uik volgend jaar weer mee ʕ•ᴥ•ʔ ?" },
+      { img: "IMG_2656.jpeg", text: "Eten maken we altijd zelf, we zijn niet lui. Die sushi ziet er lekker uit, maar de echte snack zit in de groene trui (｡◕‿◕｡)" },
+      { img: "IMG_5566.jpeg", text: "'He, ga je even mee naar de wc?'" },
+      { img: "IMG_5568.jpeg", text: "TOBI ALERT: app Tobi nu en zeg hoe erg we hem missen en dat hij deze zomer gewoon naar Europa komt." },
+      { img: "IMG_5573.jpeg", text: "'De bende van ellende, klaar om de nacht te veroveren': Berlijn, 2025" },
+      { img: "IMG_5843.jpeg", text: "Jij, dakterras, wijntje, pizza, goeie gesprekken en het allemaal nog een beetje spannend vinden, take me back" },
+      { img: "IMG_6651.jpeg", text: "Noem een betere groep mensen om een weekend te beleven die je nooit meer vergeet, ik wacht" },
+      { img: "IMG_6671.jpeg", text: "De drie meest tevreden jongens allertijden" },
+      { img: "IMG_2743.jpeg", text: "Nancy was trots op ons, alleen nog even oefenen met de houten lepel buiten de pan houden" },
+      { img: "IMG_2752.PNG", text: "Even laten zien hoe statisch je haar was, en ik mocht geen screenshot nemen... :O" },
+      { img: "IMG_2762.JPG", text: "Ik denk dat ik geen enkel ander moment rustiger ben dan hier op deze foto" },
+      { img: "4bf0ff7b-bac7-411f-b9a8-b534039d63c5.JPG", text: "Marathon door Amsterdam wandelen om wilde matcha moeders te kijken, moeten we vaker doen" },
+      { img: "B4F91D87-C767-402F-A6A7-534B4EE027D3.JPG", text: "Je kado voor valentijn heeft me de laatste weken gewoon echt een beetje makkelijker gemaakt, je weet hoe geweldig je bent toch?" },
+      { img: "IMG_2675.jpeg", text: "ELIN CHALLENGE: Omdat we Elin altijd zoveel missen, moet je Elin nu appen dat je haar mist en om te vragen wanneer we elkaar weer zien :)" },
+      { img: "IMG_2683.jpeg", text: "Valentijns weekend met jou is natuurlijk al geweldig, maar met onze vriendjes erbij was het gewoon nog leuker" },
+      { img: "IMG_2686.jpeg", text: "Eindelijk heb ik je echt een roos gegeven voor Valentijn, dat maakte me heel blij :)" },
+      { img: "IMG_2690.jpeg", text: "Qutie is Elin ook he 💗ᗜ💗" },
+      { img: "IMG_2698.jpeg", text: "Dansjes met Maddie!!! En beste vriendjes worden met de beveiliger. Ik ben zijn naam vergeten, 5 kusjes als jij het nog weet :)" }
+    ];
 
     // 🎁 Kies juiste item
     let chosen;
@@ -185,9 +253,158 @@
     }
 
     typeText();
+
+    // ===============================
+    // 🎮 MINIGAME LOGIC (toegevoegd)
+    // ===============================
+    const openGameBtn = document.getElementById("openGame");
+    const overlay = document.getElementById("gameOverlay");
+    const startBtn = document.getElementById("startGame");
+    const countdownEl = document.getElementById("countdown");
+    const gameArea = document.getElementById("gameArea");
+    const input = document.getElementById("answerInput");
+    const answersDiv = document.getElementById("answers");
+    const timerEl = document.getElementById("timer");
+    const resultEl = document.getElementById("result");
+    const intro = document.getElementById("gameIntro");
+
+    let timeLeft = 60;
+    let timerInterval;
+    let answers = [];
+
+    function resetGameUI() {
+      clearInterval(timerInterval);
+      timeLeft = 60;
+      answers = [];
+      answersDiv.innerHTML = "";
+      input.value = "";
+      input.disabled = false;
+      resultEl.textContent = "";
+      gameArea.style.display = "none";
+      intro.style.display = "block";
+      countdownEl.style.display = "none";
+      timerEl.textContent = "60";
+    }
+
+    openGameBtn.onclick = () => {
+      resetGameUI();
+      overlay.style.display = "flex";
+    };
+
+    // Sluit met klik buiten inhoud
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        overlay.style.display = "none";
+        resetGameUI();
+      }
+    });
+
+    // Sluit met ESC
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.style.display !== "none") {
+        overlay.style.display = "none";
+        resetGameUI();
+      }
+    });
+
+    startBtn.onclick = () => {
+      intro.style.display = "none";
+      countdownEl.style.display = "block";
+
+      let count = 3;
+      countdownEl.textContent = count;
+
+      const cd = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countdownEl.textContent = count;
+        } else {
+          clearInterval(cd);
+          countdownEl.style.display = "none";
+          startGame();
+        }
+      }, 1000);
+    };
+
+    function startGame() {
+      gameArea.style.display = "block";
+      input.focus();
+      timerEl.textContent = timeLeft;
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    input.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && input.value.trim() !== "") {
+        const val = input.value.trim();
+
+        if (!answers.includes(val.toLowerCase())) {
+          answers.push(val.toLowerCase());
+
+          const bubble = document.createElement("div");
+          bubble.textContent = val;
+          bubble.style.padding = "6px 10px";
+          bubble.style.background = "white";
+          bubble.style.color = "black";
+          bubble.style.borderRadius = "15px";
+          bubble.style.fontSize = "14px";
+
+          answersDiv.appendChild(bubble);
+        }
+
+        input.value = "";
+      }
+    });
+
+    function endGame() {
+      input.disabled = true;
+
+      if (answers.length >= 10) {
+        launchConfetti();
+        resultEl.textContent = "Gefeliciteerd, je hebt een date gewonnen! 💖";
+      } else {
+        resultEl.textContent = "Helaas, je hebt niet gewonnen, maar ik neem je alsnog mee op date zodat je wel 1 plekje meer weet :).";
+      }
+    }
+
+    // 🎉 Simpele confetti
+    function launchConfetti() {
+      for (let i = 0; i < 80; i++) {
+        const conf = document.createElement("div");
+        conf.style.position = "fixed";
+        conf.style.width = "8px";
+        conf.style.height = "8px";
+        conf.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
+        conf.style.top = "0px";
+        conf.style.left = Math.random() * window.innerWidth + "px";
+        conf.style.opacity = "0.8";
+        conf.style.zIndex = "9999";
+
+        document.body.appendChild(conf);
+
+        let fall = setInterval(() => {
+          conf.style.top = (parseFloat(conf.style.top) + 5) + "px";
+          if (parseFloat(conf.style.top) > window.innerHeight) {
+            clearInterval(fall);
+            conf.remove();
+          }
+        }, 20);
+      }
+    }
+    // ===============================
+    // EINDE MINIGAME LOGIC
+    // ===============================
   </script>
 </body>
 </html>
+
 
 
 
